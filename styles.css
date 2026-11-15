@@ -1,0 +1,1223 @@
+/* ==========================================================================
+   OBSIDIAN PRESS — Newspaper & Magazine Layout Engine (inspired by Biblio Times)
+   ========================================================================== */
+
+.obsidian-press-root {
+	--op-paper: #f3ede2;
+	--op-paper-elevated: #ece4d5;
+	--op-ink: #1c1915;
+	--op-ink-muted: #575046;
+	--op-ink-faint: #857c6f;
+	--op-rule: #2a251f;
+	--op-rule-light: rgba(42, 37, 31, 0.22);
+	--op-accent: #7c2d12;
+	--op-font-display: "Fraunces", "Playfair Display", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+	--op-font-body: "Newsreader", "Iowan Old Style", "Charter", "Sitka Text", Georgia, serif;
+	--op-font-meta: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--op-base-size: 16px;
+	--op-grain-opacity: 0.045;
+
+	position: relative;
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	background-color: var(--op-paper);
+	color: var(--op-ink);
+	font-family: var(--op-font-body);
+	font-size: var(--op-base-size);
+	line-height: 1.58;
+	container-type: inline-size;
+	container-name: presspane;
+	color-scheme: light;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Isolate paper typography & controls from Obsidian themes (e.g. Border / Dark Mode) */
+.obsidian-press-root h1,
+.obsidian-press-root h2,
+.obsidian-press-root h3,
+.obsidian-press-root h4 {
+	color: var(--op-ink);
+	font-family: var(--op-font-display);
+}
+
+.obsidian-press-root p,
+.obsidian-press-root li {
+	color: var(--op-ink);
+}
+
+.obsidian-press-root button.op-btn,
+.obsidian-press-root button.op-desk-tab,
+.obsidian-press-root button.op-filter-pill,
+.obsidian-press-root button.op-mini-action,
+.obsidian-press-root select.op-select {
+	box-shadow: none;
+	height: auto;
+}
+
+/* Subtle paper fiber grain via inline SVG data URI (zero network dependency) */
+.obsidian-press-root::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 1;
+	opacity: var(--op-grain-opacity);
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   TYPE SCALES
+   -------------------------------------------------------------------------- */
+.obsidian-press-root.op-scale-compact {
+	--op-base-size: 14.5px;
+}
+.obsidian-press-root.op-scale-standard {
+	--op-base-size: 16px;
+}
+.obsidian-press-root.op-scale-comfortable {
+	--op-base-size: 17.5px;
+}
+.obsidian-press-root.op-scale-large {
+	--op-base-size: 19.5px;
+}
+
+/* --------------------------------------------------------------------------
+   NEWSPAPER EDITIONS: BIBLIO / DIGITAL / DYSTOPIAN
+   -------------------------------------------------------------------------- */
+.obsidian-press-root.op-edition-biblio {
+	--op-paper: #f3ede2;
+	--op-paper-elevated: #eae1d2;
+	--op-ink: #1c1915;
+	--op-ink-muted: #544d43;
+	--op-ink-faint: #7d7467;
+	--op-rule: #26211b;
+	--op-rule-light: rgba(38, 33, 27, 0.2);
+	--op-accent: #7f2917;
+	--op-font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+	--op-font-body: "Newsreader", "Iowan Old Style", "Charter", Georgia, serif;
+	--op-font-meta: "Newsreader", Georgia, serif;
+	--op-grain-opacity: 0.045;
+}
+
+.obsidian-press-root.op-edition-digital {
+	--op-paper: #f8f9fa;
+	--op-paper-elevated: #eef0f3;
+	--op-ink: #111317;
+	--op-ink-muted: #495057;
+	--op-ink-faint: #747d88;
+	--op-rule: #111317;
+	--op-rule-light: rgba(17, 19, 23, 0.14);
+	--op-accent: #1d4ed8;
+	--op-font-display: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+	--op-font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--op-font-meta: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+	--op-grain-opacity: 0.01;
+}
+
+.obsidian-press-root.op-edition-dystopian {
+	--op-paper: #c9c5bc;
+	--op-paper-elevated: #bdb8ae;
+	--op-ink: #191816;
+	--op-ink-muted: #3f3d38;
+	--op-ink-faint: #5d5a53;
+	--op-rule: #191816;
+	--op-rule-light: rgba(25, 24, 22, 0.28);
+	--op-accent: #4a1c15;
+	--op-font-display: "Courier Prime", "American Typewriter", "IBM Plex Mono", "Courier New", monospace;
+	--op-font-body: "Courier Prime", "American Typewriter", "IBM Plex Mono", "Courier New", monospace;
+	--op-font-meta: "Courier Prime", "IBM Plex Mono", monospace;
+	--op-grain-opacity: 0.095;
+}
+
+/* --------------------------------------------------------------------------
+   MAGAZINE FORMATS: BICYCLE / SIGNAL / PLATE (LIGHT & DARK)
+   -------------------------------------------------------------------------- */
+.obsidian-press-root.op-mag-bicycle {
+	--op-paper: #f6f0e4;
+	--op-paper-elevated: #ede4d3;
+	--op-ink: #1d1a16;
+	--op-ink-muted: #5a5248;
+	--op-ink-faint: #847a6d;
+	--op-rule: #2d2721;
+	--op-rule-light: rgba(45, 39, 33, 0.16);
+	--op-accent: #8b321c;
+	--op-font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+	--op-font-body: "Newsreader", "Iowan Old Style", Georgia, serif;
+	--op-font-meta: "Inter", -apple-system, sans-serif;
+	--op-grain-opacity: 0.035;
+}
+
+.obsidian-press-root.op-mag-signal {
+	--op-paper: #dfe2e5;
+	--op-paper-elevated: #d3d7db;
+	--op-ink: #131518;
+	--op-ink-muted: #43484f;
+	--op-ink-faint: #676e77;
+	--op-rule: #131518;
+	--op-rule-light: rgba(19, 21, 24, 0.22);
+	--op-accent: #b91c1c;
+	--op-font-display: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+	--op-font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+	--op-font-meta: "Courier Prime", "IBM Plex Mono", monospace;
+	--op-grain-opacity: 0.025;
+}
+
+.obsidian-press-root.op-mag-plate-light {
+	--op-paper: #fafafa;
+	--op-paper-elevated: #f1f1f1;
+	--op-ink: #141414;
+	--op-ink-muted: #525252;
+	--op-ink-faint: #787878;
+	--op-rule: #171717;
+	--op-rule-light: rgba(20, 20, 20, 0.12);
+	--op-accent: #141414;
+	--op-font-display: "Fraunces", Georgia, serif;
+	--op-font-body: "Newsreader", Georgia, serif;
+	--op-font-meta: "Inter", -apple-system, sans-serif;
+	--op-grain-opacity: 0.01;
+}
+
+.obsidian-press-root.op-mag-plate-dark {
+	color-scheme: dark;
+	--op-paper: #141414;
+	--op-paper-elevated: #1e1e1e;
+	--op-ink: #ede9e0;
+	--op-ink-muted: #b3ada2;
+	--op-ink-faint: #7f7a70;
+	--op-rule: #ede9e0;
+	--op-rule-light: rgba(237, 233, 224, 0.16);
+	--op-accent: #e5c07b;
+	--op-font-display: "Fraunces", Georgia, serif;
+	--op-font-body: "Newsreader", Georgia, serif;
+	--op-font-meta: "Inter", -apple-system, sans-serif;
+	--op-grain-opacity: 0.03;
+}
+
+/* --------------------------------------------------------------------------
+   OUTER SHEET & PRESS CHROME BAR
+   -------------------------------------------------------------------------- */
+.op-sheet {
+	position: relative;
+	z-index: 2;
+	max-width: 1240px;
+	margin: 0 auto;
+	padding: 16px 32px 64px;
+}
+
+.obsidian-press-root.op-sheet-folded .op-sheet {
+	max-width: 680px;
+	padding: 14px 20px 56px;
+}
+
+@container presspane (max-width: 760px) {
+	.op-sheet {
+		padding: 12px 16px 48px;
+	}
+}
+
+.op-utility-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 12px;
+	padding-bottom: 10px;
+	margin-bottom: 12px;
+	border-bottom: 1px solid var(--op-rule-light);
+	font-family: var(--op-font-meta);
+	font-size: 0.78rem;
+	color: var(--op-ink-muted);
+}
+
+.op-utility-group {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+
+.op-btn,
+.op-select {
+	appearance: none;
+	background: transparent;
+	color: var(--op-ink);
+	border: 1px solid var(--op-rule-light);
+	border-radius: 3px;
+	padding: 3px 9px;
+	font-family: var(--op-font-meta);
+	font-size: 0.76rem;
+	line-height: 1.4;
+	cursor: pointer;
+	transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.op-btn:hover,
+.op-select:hover {
+	background-color: var(--op-paper-elevated);
+	border-color: var(--op-rule);
+}
+
+.op-btn.is-active,
+.op-btn-primary {
+	background-color: var(--op-ink);
+	color: var(--op-paper);
+	border-color: var(--op-ink);
+}
+
+.op-btn-primary:hover {
+	opacity: 0.9;
+	background-color: var(--op-ink);
+	color: var(--op-paper);
+}
+
+/* --------------------------------------------------------------------------
+   MASTHEAD
+   -------------------------------------------------------------------------- */
+.op-masthead {
+	text-align: center;
+	padding: 6px 0 0;
+	margin-bottom: 18px;
+}
+
+.op-masthead-ears {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	font-family: var(--op-font-meta);
+	font-size: 0.74rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--op-ink-muted);
+	padding-bottom: 6px;
+	border-bottom: 1px solid var(--op-rule);
+}
+
+.op-masthead-title-row {
+	padding: 14px 8px 10px;
+}
+
+.op-masthead-title {
+	margin: 0;
+	font-family: var(--op-font-display);
+	font-size: clamp(2.15rem, 5.2cqi, 4.1rem);
+	font-weight: 800;
+	line-height: 1.02;
+	letter-spacing: -0.02em;
+	color: var(--op-ink);
+	font-variation-settings: "SOFT" 50, "WONK" 1;
+}
+
+.obsidian-press-root.op-edition-digital .op-masthead-title {
+	letter-spacing: -0.04em;
+	font-weight: 850;
+}
+
+.obsidian-press-root.op-edition-dystopian .op-masthead-title {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-weight: 700;
+}
+
+.op-masthead-subtitle {
+	margin-top: 4px;
+	font-family: var(--op-font-body);
+	font-style: italic;
+	font-size: 0.95rem;
+	color: var(--op-ink-muted);
+}
+
+.op-masthead-dateline {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: 6px 16px;
+	padding: 6px 4px;
+	border-top: 3px double var(--op-rule);
+	border-bottom: 1px solid var(--op-rule);
+	font-family: var(--op-font-meta);
+	font-size: 0.77rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--op-ink);
+}
+
+/* Section / Desk Ribbon + Read Filter Bar */
+.op-desk-nav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 14px;
+	padding: 8px 0;
+	border-bottom: 2px solid var(--op-rule);
+}
+
+.op-desk-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 14px;
+}
+
+.op-desk-tab {
+	background: none;
+	border: none;
+	padding: 2px 0;
+	font-family: var(--op-font-meta);
+	font-size: 0.8rem;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--op-ink-muted);
+	cursor: pointer;
+	border-bottom: 2px solid transparent;
+}
+
+.op-desk-tab:hover {
+	color: var(--op-ink);
+}
+
+.op-desk-tab.is-active {
+	color: var(--op-ink);
+	border-bottom-color: var(--op-ink);
+}
+
+.op-filter-pills {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.op-filter-pill {
+	background: none;
+	border: 1px solid transparent;
+	border-radius: 99px;
+	padding: 2px 8px;
+	font-family: var(--op-font-meta);
+	font-size: 0.72rem;
+	color: var(--op-ink-muted);
+	cursor: pointer;
+}
+
+.op-filter-pill.is-active {
+	border-color: var(--op-rule);
+	color: var(--op-ink);
+	font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   CONTINUE READING STRIP (Cross-Device Resume Bar)
+   -------------------------------------------------------------------------- */
+.op-continue-strip {
+	margin: 0 0 18px;
+	padding: 10px 14px;
+	background-color: var(--op-paper-elevated);
+	border-bottom: 1px solid var(--op-rule-light);
+}
+
+.op-continue-header {
+	font-family: var(--op-font-meta);
+	font-size: 0.7rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--op-accent);
+	margin-bottom: 6px;
+}
+
+.op-continue-items {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 10px 18px;
+}
+
+.op-continue-card {
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.op-continue-card-title {
+	font-family: var(--op-font-display);
+	font-size: 0.92rem;
+	font-weight: 650;
+	line-height: 1.25;
+	color: var(--op-ink);
+}
+
+.op-continue-card:hover .op-continue-card-title {
+	text-decoration: underline;
+}
+
+.op-continue-card-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-family: var(--op-font-meta);
+	font-size: 0.7rem;
+	color: var(--op-ink-muted);
+}
+
+.op-progress-track {
+	height: 3px;
+	width: 100%;
+	background: var(--op-rule-light);
+	overflow: hidden;
+	margin-top: 2px;
+}
+
+.op-progress-fill {
+	height: 100%;
+	background: var(--op-ink);
+}
+
+/* --------------------------------------------------------------------------
+   FRONT PAGE — ABOVE THE FOLD & BELOW THE FOLD
+   -------------------------------------------------------------------------- */
+.op-above-fold {
+	display: grid;
+	grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+	gap: 0;
+	padding-bottom: 22px;
+	border-bottom: 3px double var(--op-rule);
+	margin-bottom: 22px;
+}
+
+.op-lead-column {
+	padding-right: 24px;
+	border-right: 1px solid var(--op-rule-light);
+}
+
+.op-secondary-column {
+	padding-left: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.op-secondary-column > .op-story-card + .op-story-card {
+	padding-top: 18px;
+	border-top: 1px solid var(--op-rule-light);
+}
+
+/* Folded Mode or Narrow Obsidian Pane */
+.obsidian-press-root.op-sheet-folded .op-above-fold {
+	grid-template-columns: 1fr;
+}
+.obsidian-press-root.op-sheet-folded .op-lead-column {
+	padding-right: 0;
+	border-right: none;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--op-rule-light);
+}
+.obsidian-press-root.op-sheet-folded .op-secondary-column {
+	padding-left: 0;
+	padding-top: 18px;
+}
+
+@container presspane (max-width: 820px) {
+	.op-above-fold {
+		grid-template-columns: 1fr;
+	}
+	.op-lead-column {
+		padding-right: 0;
+		border-right: none;
+		padding-bottom: 18px;
+		border-bottom: 1px solid var(--op-rule-light);
+	}
+	.op-secondary-column {
+		padding-left: 0;
+		padding-top: 18px;
+	}
+}
+
+/* Lead Story Styling */
+.op-lead-story {
+	cursor: pointer;
+}
+
+.op-kicker-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px 10px;
+	font-family: var(--op-font-meta);
+	font-size: 0.72rem;
+	font-weight: 650;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--op-ink-muted);
+	margin-bottom: 6px;
+}
+
+.op-kicker-source {
+	color: var(--op-accent);
+}
+
+.op-topic-pill {
+	padding: 1px 6px;
+	border: 1px solid var(--op-rule-light);
+	font-size: 0.66rem;
+}
+
+.op-lead-headline {
+	margin: 0 0 10px;
+	font-family: var(--op-font-display);
+	font-size: clamp(1.65rem, 3.1cqi, 2.55rem);
+	font-weight: 750;
+	line-height: 1.12;
+	letter-spacing: -0.015em;
+	color: var(--op-ink);
+}
+
+.op-lead-story:hover .op-lead-headline,
+.op-story-card:hover .op-story-headline {
+	text-decoration: underline;
+	text-decoration-thickness: 1.5px;
+	text-underline-offset: 3px;
+}
+
+.op-lead-deck {
+	font-size: 1.06rem;
+	line-height: 1.5;
+	color: var(--op-ink);
+	column-count: 2;
+	column-gap: 22px;
+	column-rule: 1px solid var(--op-rule-light);
+	text-align: justify;
+	hyphens: auto;
+	margin-top: 12px;
+}
+
+.obsidian-press-root.op-sheet-folded .op-lead-deck {
+	column-count: 1;
+}
+
+@container presspane (max-width: 620px) {
+	.op-lead-deck {
+		column-count: 1;
+	}
+}
+
+/* Classic Newspaper Drop Cap on Lead Story */
+.op-lead-deck::first-letter {
+	float: left;
+	font-family: var(--op-font-display);
+	font-size: 3.1em;
+	line-height: 0.84;
+	padding-right: 8px;
+	padding-top: 3px;
+	font-weight: 700;
+	color: var(--op-ink);
+}
+
+/* Below the Fold Multi-Column Grid */
+.op-fold-label {
+	font-family: var(--op-font-meta);
+	font-size: 0.7rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--op-ink-faint);
+	margin-bottom: 12px;
+}
+
+.op-columns-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 22px 0;
+	margin-bottom: 28px;
+}
+
+.op-columns-grid > .op-story-card {
+	padding: 0 18px;
+	border-right: 1px solid var(--op-rule-light);
+}
+
+.op-columns-grid > .op-story-card:nth-child(3n + 1) {
+	padding-left: 0;
+}
+
+.op-columns-grid > .op-story-card:nth-child(3n),
+.op-columns-grid > .op-story-card:last-child {
+	border-right: none;
+	padding-right: 0;
+}
+
+.obsidian-press-root.op-sheet-folded .op-columns-grid {
+	grid-template-columns: 1fr;
+	gap: 16px;
+}
+.obsidian-press-root.op-sheet-folded .op-columns-grid > .op-story-card {
+	padding: 0 0 16px;
+	border-right: none;
+	border-bottom: 1px solid var(--op-rule-light);
+}
+
+@container presspane (max-width: 900px) {
+	.op-columns-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.op-columns-grid > .op-story-card {
+		padding: 0 14px;
+		border-right: 1px solid var(--op-rule-light);
+	}
+	.op-columns-grid > .op-story-card:nth-child(2n + 1) {
+		padding-left: 0;
+	}
+	.op-columns-grid > .op-story-card:nth-child(2n) {
+		border-right: none;
+		padding-right: 0;
+	}
+}
+
+@container presspane (max-width: 580px) {
+	.op-columns-grid {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+	.op-columns-grid > .op-story-card {
+		padding: 0 0 16px !important;
+		border-right: none !important;
+		border-bottom: 1px solid var(--op-rule-light);
+	}
+}
+
+/* --------------------------------------------------------------------------
+   STORY CARDS & SECTIONS
+   -------------------------------------------------------------------------- */
+.op-story-card {
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+}
+
+.op-story-headline {
+	margin: 0 0 6px;
+	font-family: var(--op-font-display);
+	font-size: 1.22rem;
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--op-ink);
+}
+
+.op-story-excerpt {
+	margin: 0;
+	font-size: 0.94rem;
+	line-height: 1.52;
+	color: var(--op-ink);
+	text-align: justify;
+	hyphens: auto;
+}
+
+.op-story-footer {
+	margin-top: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	font-family: var(--op-font-meta);
+	font-size: 0.72rem;
+	color: var(--op-ink-faint);
+}
+
+.op-story-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.op-mini-action {
+	background: none;
+	border: none;
+	padding: 1px 4px;
+	font-family: var(--op-font-meta);
+	font-size: 0.7rem;
+	color: var(--op-ink-muted);
+	cursor: pointer;
+	border-radius: 2px;
+}
+
+.op-mini-action:hover {
+	background: var(--op-paper-elevated);
+	color: var(--op-ink);
+}
+
+.op-mini-action.is-clipped {
+	color: var(--op-accent);
+	font-weight: 600;
+}
+
+/* Read state dimming (subtle ink fade so newspaper layout stays harmonious) */
+.obsidian-press-root.op-dim-read .op-story-card.is-read .op-story-headline,
+.obsidian-press-root.op-dim-read .op-story-card.is-read .op-story-excerpt,
+.obsidian-press-root.op-dim-read .op-lead-story.is-read .op-lead-headline,
+.obsidian-press-root.op-dim-read .op-lead-story.is-read .op-lead-deck {
+	opacity: 0.56;
+}
+
+.op-status-badge {
+	font-family: var(--op-font-meta);
+	font-size: 0.68rem;
+	padding: 0 5px;
+	border: 1px solid var(--op-rule-light);
+	color: var(--op-ink-muted);
+}
+
+/* Editorial Desk Section Blocks */
+.op-section-block {
+	margin-top: 28px;
+	padding-top: 12px;
+	border-top: 2px solid var(--op-rule);
+}
+
+.op-section-header {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	margin-bottom: 16px;
+	padding-bottom: 6px;
+	border-bottom: 1px solid var(--op-rule-light);
+}
+
+.op-section-title {
+	margin: 0;
+	font-family: var(--op-font-display);
+	font-size: 1.38rem;
+	font-weight: 750;
+	letter-spacing: 0.01em;
+	color: var(--op-ink);
+}
+
+.obsidian-press-root.op-edition-dystopian .op-section-title {
+	background: var(--op-ink);
+	color: var(--op-paper);
+	padding: 2px 10px;
+	font-size: 1.05rem;
+	text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   HALFTONE FIGURES & IMAGES
+   -------------------------------------------------------------------------- */
+.op-figure {
+	margin: 0 0 10px;
+}
+
+.op-image-frame {
+	width: 100%;
+	overflow: hidden;
+	border: 1px solid var(--op-rule-light);
+	background-color: var(--op-paper-elevated);
+}
+
+.op-image-frame.is-loading {
+	min-height: 150px;
+}
+
+.op-image {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: 430px;
+	object-fit: cover;
+}
+
+.op-story-card .op-image {
+	max-height: 210px;
+}
+
+.op-image-css-fallback {
+	filter: grayscale(100%) contrast(125%);
+	mix-blend-mode: multiply;
+}
+
+.op-figcaption {
+	margin-top: 4px;
+	font-family: var(--op-font-meta);
+	font-size: 0.72rem;
+	line-height: 1.35;
+	color: var(--op-ink-muted);
+	font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   MAGAZINE LAYOUTS (BICYCLE, SIGNAL, PLATE)
+   -------------------------------------------------------------------------- */
+.op-mag-hero {
+	display: grid;
+	grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+	gap: 28px;
+	align-items: center;
+	padding: 18px 0 28px;
+	border-bottom: 1px solid var(--op-rule);
+	margin-bottom: 28px;
+	cursor: pointer;
+}
+
+@container presspane (max-width: 780px) {
+	.op-mag-hero {
+		grid-template-columns: 1fr;
+	}
+}
+
+.op-mag-hero-title {
+	margin: 8px 0 12px;
+	font-family: var(--op-font-display);
+	font-size: clamp(1.85rem, 3.6cqi, 3rem);
+	line-height: 1.08;
+	font-weight: 750;
+}
+
+.op-mag-bicycle-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 32px 28px;
+}
+
+.op-mag-signal-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+	gap: 1px;
+	background-color: var(--op-rule);
+	border: 1px solid var(--op-rule);
+}
+
+.op-mag-signal-card {
+	background-color: var(--op-paper);
+	padding: 18px;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.op-mag-signal-index {
+	font-family: var(--op-font-meta);
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--op-ink-faint);
+	margin-bottom: 8px;
+}
+
+.op-mag-plate-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+	gap: 36px 28px;
+}
+
+.op-mag-plate-card {
+	cursor: pointer;
+}
+
+.op-mag-plate-card .op-image {
+	max-height: 340px;
+	aspect-ratio: 4 / 3;
+}
+
+/* --------------------------------------------------------------------------
+   IN-PAPER ARTICLE READER
+   -------------------------------------------------------------------------- */
+.op-reader-wrap {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 8px 0 72px;
+}
+
+.op-reader-sticky-bar {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	background-color: var(--op-paper);
+	padding: 10px 0 8px;
+	margin-bottom: 22px;
+	border-bottom: 1px solid var(--op-rule);
+}
+
+.op-reader-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.op-reader-progress-line {
+	height: 2px;
+	width: 100%;
+	background: var(--op-rule-light);
+	margin-top: 8px;
+}
+
+.op-reader-progress-fill {
+	height: 100%;
+	width: 0%;
+	background: var(--op-accent);
+	transition: width 90ms linear;
+}
+
+.op-reader-header {
+	margin-bottom: 24px;
+	padding-bottom: 16px;
+	border-bottom: 3px double var(--op-rule);
+}
+
+.op-reader-headline {
+	margin: 8px 0 12px;
+	font-family: var(--op-font-display);
+	font-size: clamp(1.8rem, 3.6cqi, 2.75rem);
+	line-height: 1.12;
+	font-weight: 780;
+	color: var(--op-ink);
+}
+
+.op-reader-byline {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 16px;
+	font-family: var(--op-font-meta);
+	font-size: 0.82rem;
+	color: var(--op-ink-muted);
+}
+
+.op-reader-body {
+	font-family: var(--op-font-body);
+	font-size: 1.08rem;
+	line-height: 1.72;
+	color: var(--op-ink);
+}
+
+.op-reader-body p {
+	margin: 0 0 1.15em;
+	text-align: justify;
+	hyphens: auto;
+}
+
+.op-reader-body > p:first-of-type::first-letter {
+	float: left;
+	font-family: var(--op-font-display);
+	font-size: 3.3em;
+	line-height: 0.85;
+	padding-right: 9px;
+	padding-top: 4px;
+	font-weight: 700;
+}
+
+.op-reader-body h2,
+.op-reader-body h3,
+.op-reader-body h4 {
+	font-family: var(--op-font-display);
+	margin: 1.6em 0 0.6em;
+	line-height: 1.25;
+	color: var(--op-ink);
+}
+
+.op-reader-body blockquote {
+	margin: 1.4em 0;
+	padding: 4px 0 4px 18px;
+	border-left: 3px solid var(--op-rule);
+	font-style: italic;
+	color: var(--op-ink-muted);
+}
+
+.op-reader-body img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 1.2em auto;
+	border: 1px solid var(--op-rule-light);
+}
+
+.op-reader-body a {
+	color: var(--op-accent);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.op-reader-body pre {
+	background: var(--op-paper-elevated);
+	padding: 12px 14px;
+	overflow-x: auto;
+	border: 1px solid var(--op-rule-light);
+	font-size: 0.86rem;
+}
+
+.op-resume-highlight {
+	background-color: rgba(180, 120, 40, 0.14);
+	transition: background-color 1.8s ease;
+}
+
+.op-blocked-banner {
+	margin: 0 0 20px;
+	padding: 14px 16px;
+	background-color: var(--op-paper-elevated);
+	border: 1px solid var(--op-rule);
+	border-left: 4px solid var(--op-accent);
+	font-family: var(--op-font-meta);
+	font-size: 0.86rem;
+}
+
+.op-blocked-banner p {
+	margin: 6px 0 12px;
+	color: var(--op-ink-muted);
+	line-height: 1.45;
+}
+
+.op-webview-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 6px 10px;
+	background-color: var(--op-paper-elevated);
+	border: 1px solid var(--op-rule);
+	border-bottom: none;
+	font-family: var(--op-font-meta);
+	font-size: 0.75rem;
+	color: var(--op-ink-muted);
+}
+
+.op-webview-url {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.op-embedded-webview {
+	display: flex;
+	width: 100%;
+	height: 74vh;
+	border: 1px solid var(--op-rule);
+	background: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   FORTNIGHT BACK-ISSUE RACK & CLIPPINGS RACK & EMPTY PRESS STATE
+   -------------------------------------------------------------------------- */
+.op-rack-panel {
+	margin: 16px 0 24px;
+	padding: 16px 20px;
+	background-color: var(--op-paper-elevated);
+	border: 1px solid var(--op-rule);
+}
+
+.op-rack-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+	gap: 12px;
+	margin-top: 12px;
+}
+
+.op-rack-card {
+	padding: 10px 12px;
+	background-color: var(--op-paper);
+	border: 1px solid var(--op-rule-light);
+	cursor: pointer;
+}
+
+.op-rack-card:hover,
+.op-rack-card.is-current {
+	border-color: var(--op-rule);
+}
+
+.op-empty-press {
+	max-width: 580px;
+	margin: 48px auto;
+	padding: 32px 28px;
+	text-align: center;
+	border: 3px double var(--op-rule);
+	background-color: var(--op-paper-elevated);
+}
+
+.op-empty-press h2 {
+	margin: 0 0 10px;
+	font-family: var(--op-font-display);
+	font-size: 1.8rem;
+}
+
+.op-empty-press p {
+	color: var(--op-ink-muted);
+	margin: 0 0 20px;
+}
+
+/* --------------------------------------------------------------------------
+   MANAGE PAPER & STARTER CATALOG MODAL
+   -------------------------------------------------------------------------- */
+.op-modal-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	border-bottom: 1px solid var(--background-modifier-border);
+	padding-bottom: 10px;
+	margin-bottom: 16px;
+}
+
+.op-modal-tab {
+	padding: 5px 12px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 0.85rem;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+}
+
+.op-modal-tab.is-active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
+}
+
+.op-starter-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	gap: 10px;
+	margin-bottom: 18px;
+}
+
+.op-starter-item {
+	padding: 10px 12px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.op-feed-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 8px 10px;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+/* --------------------------------------------------------------------------
+   PRINT / PDF STYLESHEET
+   -------------------------------------------------------------------------- */
+@media print {
+	body > *:not(.op-print-Mount) {
+		/* Allow direct window.print() when mounted */
+	}
+	.op-utility-bar,
+	.op-desk-nav,
+	.op-reader-sticky-bar,
+	.op-story-actions,
+	.op-continue-strip {
+		display: none !important;
+	}
+	.obsidian-press-root {
+		background: #ffffff !important;
+		color: #000000 !important;
+		overflow: visible !important;
+		height: auto !important;
+	}
+	.op-story-card,
+	.op-figure {
+		break-inside: avoid;
+	}
+}

@@ -1,0 +1,14 @@
+node_modules
+node_modules/
+data.json
+editions
+editions/
+main.js.map
+*.tsbuildinfo
+*.log
+npm-debug.log*
+.npm
+.eslintcache
+.env
+.env.*
+.DS_Store

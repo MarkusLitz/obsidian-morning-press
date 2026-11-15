@@ -1,0 +1,41 @@
+{
+	"name": "obsidian-press",
+	"version": "1.0.0",
+	"description": "Local-first RSS, Atom & JSON morning newspaper and magazine reader for Obsidian inspired by Biblio Times",
+	"main": "main.js",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"test": "node --test test/*.test.mjs",
+		"version": "node version-bump.mjs && git add manifest.json versions.json"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/MarkusLitz/obsidian-press.git"
+	},
+	"homepage": "https://github.com/MarkusLitz/obsidian-press#readme",
+	"bugs": {
+		"url": "https://github.com/MarkusLitz/obsidian-press/issues"
+	},
+	"keywords": [
+		"obsidian",
+		"obsidian-plugin",
+		"rss",
+		"atom",
+		"json-feed",
+		"newspaper",
+		"magazine",
+		"halftone",
+		"clippings"
+	],
+	"author": "Markus Litz",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^20.11.0",
+		"builtin-modules": "^3.3.0",
+		"esbuild": "0.21.5",
+		"obsidian": "1.7.2",
+		"tslib": "2.6.2",
+		"typescript": "5.4.5"
+	}
+}
