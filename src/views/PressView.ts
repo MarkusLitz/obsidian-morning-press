@@ -1,4 +1,4 @@
-import { ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
+import { ItemView, Notice, TFile, WorkspaceLeaf, sanitizeHTMLToDom } from "obsidian";
 import { saveArticleClipToVault } from "../clipper/vaultClipper";
 import { formatMastheadDate, formatShortDate, toDateKey, t } from "../i18n";
 import { getEditionPalette, mountPressImageElement } from "../media/halftone";
@@ -22,7 +22,7 @@ import { mountArticleReader } from "./ArticleReader";
 import { renderMagazineLayout } from "./MagazineRenderer";
 import { ManagePaperModal } from "./ManagePaperModal";
 
-const GOOGLE_FONTS_ID = "obsidian-press-google-fonts";
+const GOOGLE_FONTS_ID = "morning-press-google-fonts";
 const GOOGLE_FONTS_HREF =
 	"https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,400..700&family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap";
 
@@ -55,7 +55,7 @@ export class PressView extends ItemView {
 	}
 
 	getDisplayText(): string {
-		return this.plugin.getActivePaper().title || "Obsidian Press";
+		return this.plugin.getActivePaper().title || "Morning Press";
 	}
 
 	getIcon(): string {
@@ -66,8 +66,7 @@ export class PressView extends ItemView {
 		this.ensureTypographyLoaded();
 
 		this.contentEl.empty();
-		this.contentEl.style.padding = "0";
-		this.contentEl.style.overflow = "hidden";
+		this.contentEl.addClass("op-view-content");
 
 		this.rootEl = this.contentEl.createDiv({ cls: "obsidian-press-root" });
 		this.sheetEl = this.rootEl.createDiv({ cls: "op-sheet" });
@@ -342,11 +341,9 @@ export class PressView extends ItemView {
 			empty.createEl("h2", { text: t(paper.language, "emptyPressTitle") });
 			empty.createEl("p", { text: t(paper.language, "emptyPressLead") });
 			const setupBtn = empty.createEl("button", {
-				cls: "op-btn op-btn-primary",
+				cls: "op-btn op-btn-primary op-btn-lg",
 				text: t(paper.language, "setupSourcesBtn"),
 			});
-			setupBtn.style.padding = "8px 18px";
-			setupBtn.style.fontSize = "0.9rem";
 			setupBtn.addEventListener("click", () => this.openManageModal("starter"));
 			return;
 		}
@@ -596,15 +593,13 @@ export class PressView extends ItemView {
 				cls: `op-rack-card ${isCurrent ? "is-current" : ""}`.trim(),
 			});
 			card.createDiv({
+				cls: "op-rack-card-meta",
 				text: `${item.dateKey} · ${t(paper.language, "issueNo", { no: item.issueNumber })}`,
-				attr: { style: "font-weight: 700; font-size: 0.8rem;" },
 			});
 			if (item.leadHeadline) {
 				card.createDiv({
+					cls: "op-rack-card-lead",
 					text: item.leadHeadline,
-					attr: {
-						style: "font-size: 0.84rem; margin-top: 4px; line-height: 1.3;",
-					},
 				});
 			}
 			card.addEventListener("click", async () => {
@@ -634,12 +629,12 @@ export class PressView extends ItemView {
 		for (const clip of clips.slice(0, 24)) {
 			const card = grid.createDiv({ cls: "op-rack-card" });
 			card.createDiv({
+				cls: "op-rack-card-source",
 				text: clip.feedTitle,
-				attr: { style: "font-size: 0.72rem; text-transform: uppercase; opacity: 0.75;" },
 			});
 			card.createDiv({
+				cls: "op-rack-card-title",
 				text: clip.title,
-				attr: { style: "font-weight: 700; font-size: 0.88rem; margin-top: 2px;" },
 			});
 			card.addEventListener("click", () => this.openVaultNote(clip.notePath));
 		}
@@ -835,7 +830,7 @@ export class PressView extends ItemView {
 
 			const track = card.createDiv({ cls: "op-progress-track" });
 			const fill = track.createDiv({ cls: "op-progress-fill" });
-			fill.style.width = `${pct}%`;
+			fill.setCssProps({ "--op-progress": `${pct}%` });
 		}
 	}
 
@@ -958,9 +953,7 @@ export class PressView extends ItemView {
 		articles: PressArticle[]
 	): void {
 		const palette = getEditionPalette("newspaper", issue.editionUsed, issue.magazineStyleUsed);
-		const secBlock = container.createDiv({ cls: "op-section-block" });
-		secBlock.style.borderTop = "none";
-		secBlock.style.marginTop = "4px";
+		const secBlock = container.createDiv({ cls: "op-section-block op-section-block-single" });
 
 		const header = secBlock.createDiv({ cls: "op-section-header" });
 		header.createEl("h2", { cls: "op-section-title", text: sectionTitle });
@@ -1005,7 +998,7 @@ export class PressView extends ItemView {
 		if (entry?.status === "reading" && entry.progress > 0.03) {
 			const track = card.createDiv({ cls: "op-progress-track" });
 			const fill = track.createDiv({ cls: "op-progress-fill" });
-			fill.style.width = `${Math.round(entry.progress * 100)}%`;
+			fill.setCssProps({ "--op-progress": `${Math.round(entry.progress * 100)}%` });
 		}
 
 		this.renderCardFooter(card, article, paper, issue);
@@ -1156,35 +1149,55 @@ export class PressView extends ItemView {
 
 	private printCurrentEdition(): void {
 		if (!this.sheetEl) return;
-		this.printHtmlInCleanFrame(
-			this.plugin.getActivePaper().title,
-			`<div class="${this.rootEl.className}" style="height:auto;overflow:visible;"><div class="op-sheet">${this.sheetEl.innerHTML}</div></div>`
-		);
+		this.printDomInCleanFrame(this.plugin.getActivePaper().title, (doc) => {
+			const root = doc.createElement("div");
+			root.className = `${this.rootEl.className} op-print-root`;
+			const clonedSheet = doc.importNode(this.sheetEl, true);
+			root.appendChild(clonedSheet);
+			return root;
+		});
 	}
 
 	private printSingleArticle(article: PressArticle, bodyHtml: string): void {
 		const paper = this.plugin.getActivePaper();
-		const html = `
-			<div class="${this.rootEl.className}" style="height:auto;overflow:visible;padding:24px;">
-				<div class="op-reader-wrap">
-					<div class="op-kicker-row">${article.feedTitle} · ${formatMastheadDate(article.publishedAt, paper.language)}</div>
-					<h1 class="op-reader-headline">${article.title}</h1>
-					${article.author ? `<p><em>${article.author}</em></p>` : ""}
-					<div class="op-reader-body">${bodyHtml}</div>
-				</div>
-			</div>
-		`;
-		this.printHtmlInCleanFrame(article.title, html);
+		this.printDomInCleanFrame(article.title, (doc) => {
+			const root = doc.createElement("div");
+			root.className = `${this.rootEl.className} op-print-root op-print-article-root`;
+
+			const readerWrap = doc.createElement("div");
+			readerWrap.className = "op-reader-wrap";
+
+			const kicker = doc.createElement("div");
+			kicker.className = "op-kicker-row";
+			kicker.textContent = `${article.feedTitle} · ${formatMastheadDate(article.publishedAt, paper.language)}`;
+			readerWrap.appendChild(kicker);
+
+			const h1 = doc.createElement("h1");
+			h1.className = "op-reader-headline";
+			h1.textContent = article.title;
+			readerWrap.appendChild(h1);
+
+			if (article.author) {
+				const authorP = doc.createElement("p");
+				const em = doc.createElement("em");
+				em.textContent = article.author;
+				authorP.appendChild(em);
+				readerWrap.appendChild(authorP);
+			}
+
+			const bodyDiv = doc.createElement("div");
+			bodyDiv.className = "op-reader-body";
+			bodyDiv.appendChild(doc.importNode(sanitizeHTMLToDom(bodyHtml), true));
+			readerWrap.appendChild(bodyDiv);
+
+			root.appendChild(readerWrap);
+			return root;
+		});
 	}
 
-	private printHtmlInCleanFrame(docTitle: string, bodyMarkup: string): void {
+	private printDomInCleanFrame(docTitle: string, buildContent: (doc: Document) => HTMLElement): void {
 		const iframe = document.createElement("iframe");
-		iframe.style.position = "fixed";
-		iframe.style.right = "0";
-		iframe.style.bottom = "0";
-		iframe.style.width = "0";
-		iframe.style.height = "0";
-		iframe.style.border = "0";
+		iframe.className = "op-print-iframe";
 		document.body.appendChild(iframe);
 
 		const win = iframe.contentWindow;
@@ -1208,16 +1221,26 @@ export class PressView extends ItemView {
 			}
 		}
 
-		doc.open();
-		doc.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${docTitle}</title>
-			<link rel="stylesheet" href="${GOOGLE_FONTS_HREF}">
-			<style>
-				body { margin: 0; background: #fff; color: #000; }
-				${cssText}
-				.op-utility-bar, .op-desk-nav, .op-reader-sticky-bar, .op-story-actions, .op-continue-strip { display: none !important; }
-			</style>
-		</head><body>${bodyMarkup}</body></html>`);
-		doc.close();
+		doc.title = docTitle;
+		if (this.plugin.settings.loadGoogleFonts) {
+			const linkEl = doc.createElement("link");
+			linkEl.rel = "stylesheet";
+			linkEl.href = GOOGLE_FONTS_HREF;
+			doc.head.appendChild(linkEl);
+		}
+
+		const styleEl = doc.createElement("style");
+		styleEl.textContent = [
+			"body { margin: 0; background: #fff; color: #000; }",
+			cssText,
+			".op-print-root { height: auto !important; overflow: visible !important; }",
+			".op-print-article-root { padding: 24px !important; }",
+			".op-utility-bar, .op-desk-nav, .op-reader-sticky-bar, .op-story-actions, .op-continue-strip { display: none !important; }",
+		].join("\n");
+		doc.head.appendChild(styleEl);
+
+		doc.body.empty();
+		doc.body.appendChild(buildContent(doc));
 
 		window.setTimeout(() => {
 			win.focus();

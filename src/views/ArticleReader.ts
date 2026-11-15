@@ -1,4 +1,4 @@
-import { Notice, Platform } from "obsidian";
+import { Notice, Platform, sanitizeHTMLToDom } from "obsidian";
 import { extractFullArticle } from "../feeds/extractor";
 import { formatMastheadDate, t } from "../i18n";
 import { getEditionPalette, mountPressImageElement } from "../media/halftone";
@@ -151,8 +151,8 @@ export function mountArticleReader(params: {
 
 	// Open original URL button
 	if (article.url) {
-		const extLink = rightGroup.createEl("a", {
-			cls: "op-btn",
+		rightGroup.createEl("a", {
+			cls: "op-btn op-btn-link",
 			text: `${t(issue.language, "openOriginal")} ↗`,
 			attr: {
 				href: article.url,
@@ -160,7 +160,6 @@ export function mountArticleReader(params: {
 				rel: "noopener noreferrer",
 			},
 		});
-		extLink.style.textDecoration = "none";
 	}
 
 	const progressTrack = sticky.createDiv({ cls: "op-reader-progress-line" });
@@ -203,8 +202,8 @@ export function mountArticleReader(params: {
 		isEmbeddedWebOpen = forceOpen ?? !isEmbeddedWebOpen;
 		webviewSlot.empty();
 		if (isEmbeddedWebOpen) {
-			leadMediaSlot.style.display = "none";
-			bodyEl.style.display = "none";
+			leadMediaSlot.addClass("op-is-hidden");
+			bodyEl.addClass("op-is-hidden");
 			const bar = webviewSlot.createDiv({ cls: "op-webview-header" });
 			bar.createSpan({ text: article.url, cls: "op-webview-url" });
 			const closeWvBtn = bar.createEl("button", {
@@ -219,8 +218,8 @@ export function mountArticleReader(params: {
 			wv.className = "op-embedded-webview";
 			webviewSlot.appendChild(wv);
 		} else {
-			leadMediaSlot.style.display = "";
-			bodyEl.style.display = "";
+			leadMediaSlot.removeClass("op-is-hidden");
+			bodyEl.removeClass("op-is-hidden");
 		}
 	};
 
@@ -249,7 +248,7 @@ export function mountArticleReader(params: {
 			});
 		}
 
-		bodyEl.innerHTML = currentHtml;
+		bodyEl.appendChild(sanitizeHTMLToDom(currentHtml));
 
 		// Open external links cleanly in browser
 		bodyEl.querySelectorAll("a").forEach((a) => {
@@ -369,8 +368,8 @@ export function mountArticleReader(params: {
 							toggleEmbeddedWebview(true);
 						});
 					}
-					const extBtn = actions.createEl("a", {
-						cls: "op-btn",
+					actions.createEl("a", {
+						cls: "op-btn op-btn-link",
 						text: `${t(issue.language, "openOriginal")} ↗`,
 						attr: {
 							href: article.url,
@@ -378,7 +377,6 @@ export function mountArticleReader(params: {
 							rel: "noopener noreferrer",
 						},
 					});
-					extBtn.style.textDecoration = "none";
 				}
 			}
 		} catch (err) {
@@ -422,7 +420,9 @@ export function mountArticleReader(params: {
 				const maxScroll = Math.max(0, scrollRoot.scrollHeight - scrollRoot.clientHeight);
 				scrollRoot.scrollTop = Math.round(existingState.progress * maxScroll);
 			}
-			progressFill.style.width = `${Math.round(existingState.progress * 100)}%`;
+			progressFill.setCssProps({
+				"--op-progress": `${Math.round(existingState.progress * 100)}%`,
+			});
 		});
 	};
 
@@ -437,7 +437,7 @@ export function mountArticleReader(params: {
 			if (maxScroll <= 40 && !readingSync.isRead(article.articleKey)) {
 				readingSync.recordProgress(article, paper.id, 1, 0);
 				refreshReadBtnLabel();
-				progressFill.style.width = "100%";
+				progressFill.setCssProps({ "--op-progress": "100%" });
 			} else if (!existingState || existingState.status === "unread") {
 				readingSync.recordProgress(article, paper.id, 0.05, 0);
 			}
@@ -460,7 +460,7 @@ export function mountArticleReader(params: {
 		if (isFetchingFullText) return;
 		const maxScroll = scrollRoot.scrollHeight - scrollRoot.clientHeight;
 		const ratio = maxScroll <= 20 ? 1 : Math.max(0, Math.min(1, scrollRoot.scrollTop / maxScroll));
-		progressFill.style.width = `${Math.round(ratio * 100)}%`;
+		progressFill.setCssProps({ "--op-progress": `${Math.round(ratio * 100)}%` });
 
 		// Find paragraph closest to upper third of viewport
 		const viewportAnchorY = scrollRoot.getBoundingClientRect().top + scrollRoot.clientHeight * 0.32;

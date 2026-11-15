@@ -1,5 +1,5 @@
 {
-	"name": "obsidian-press",
+	"name": "morning-press",
 	"version": "1.0.0",
 	"description": "Local-first RSS, Atom & JSON morning newspaper and magazine reader for Obsidian inspired by Biblio Times",
 	"main": "main.js",
@@ -11,11 +11,11 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/MarkusLitz/obsidian-press.git"
+		"url": "https://github.com/MarkusLitz/obsidian-morning-press.git"
 	},
-	"homepage": "https://github.com/MarkusLitz/obsidian-press#readme",
+	"homepage": "https://github.com/MarkusLitz/obsidian-morning-press#readme",
 	"bugs": {
-		"url": "https://github.com/MarkusLitz/obsidian-press/issues"
+		"url": "https://github.com/MarkusLitz/obsidian-morning-press/issues"
 	},
 	"keywords": [
 		"obsidian",

@@ -66,7 +66,7 @@ export class ManagePaperModal extends Modal {
 	}
 
 	onOpen(): void {
-		this.modalEl.style.width = "min(92vw, 860px)";
+		this.modalEl.addClass("op-manage-modal");
 		this.render();
 	}
 
@@ -92,15 +92,14 @@ export class ManagePaperModal extends Modal {
 		const paper = this.currentPaper();
 		const isDe = this.uiLang() === "de";
 
-		contentEl.createEl("h2", {
-			text: isDe ? `Redaktion — ${paper.title}` : `Press Room — ${paper.title}`,
-		});
+		new Setting(contentEl)
+			.setName(isDe ? `Redaktion — ${paper.title}` : `Press room — ${paper.title}`)
+			.setHeading();
 
 		// Paper Switcher + New Paper row
 		const paperRow = contentEl.createDiv({
-			cls: "op-utility-group",
+			cls: "op-utility-group op-paper-switcher-row",
 		});
-		paperRow.style.marginBottom = "12px";
 
 		const paperSelect = paperRow.createEl("select", { cls: "dropdown" });
 		for (const p of this.host.getPapers()) {
@@ -114,7 +113,7 @@ export class ManagePaperModal extends Modal {
 		});
 
 		const addPaperBtn = paperRow.createEl("button", {
-			text: isDe ? "+ Neue Publikation" : "+ New Paper",
+			text: isDe ? "+ Neue Publikation" : "+ New paper",
 		});
 		addPaperBtn.addEventListener("click", async () => {
 			const now = Date.now();
@@ -134,7 +133,7 @@ export class ManagePaperModal extends Modal {
 
 		if (this.host.getPapers().length > 1) {
 			const delPaperBtn = paperRow.createEl("button", {
-				text: isDe ? "Publikation löschen" : "Delete Paper",
+				text: isDe ? "Publikation löschen" : "Delete paper",
 			});
 			delPaperBtn.addEventListener("click", async () => {
 				const remaining = this.host.getPapers().filter((p) => p.id !== paper.id);
@@ -152,10 +151,10 @@ export class ManagePaperModal extends Modal {
 		// Navigation Tabs
 		const tabsBar = contentEl.createDiv({ cls: "op-modal-tabs" });
 		const tabs: Array<{ id: ModalTab; label: string }> = [
-			{ id: "starter", label: isDe ? "Starter-Katalog & Desks" : "Starter Desks" },
+			{ id: "starter", label: isDe ? "Starter-Katalog & Desks" : "Starter desks" },
 			{ id: "sources", label: isDe ? `Quellen & OPML (${paper.feeds.length})` : `Sources & OPML (${paper.feeds.length})` },
-			{ id: "appearance", label: isDe ? "Edition, Magazin & Optik" : "Edition & Layout" },
-			{ id: "filters", label: isDe ? "Themen & Wortfilter" : "Topics & Filters" },
+			{ id: "appearance", label: isDe ? "Edition, Magazin & Optik" : "Edition & layout" },
+			{ id: "filters", label: isDe ? "Themen & Wortfilter" : "Topics & filters" },
 		];
 
 		for (const tab of tabs) {
@@ -185,15 +184,15 @@ export class ManagePaperModal extends Modal {
 		const isDe = this.uiLang() === "de";
 
 		new Setting(container)
-			.setName(isDe ? "Zeitungstitel (Masthead)" : "Masthead Title")
+			.setName(isDe ? "Zeitungstitel (Masthead)" : "Masthead title")
 			.addText((txt) =>
 				txt.setValue(paper.title).onChange(async (val) => {
-					await this.updatePaper((p) => ({ ...p, title: val || "Obsidian Press" }));
+					await this.updatePaper((p) => ({ ...p, title: val || "The Morning Press" }));
 				})
 			);
 
 		new Setting(container)
-			.setName(isDe ? "Untertitel & Motto" : "Subtitle & Motto")
+			.setName(isDe ? "Untertitel & Motto" : "Subtitle & motto")
 			.addText((txt) =>
 				txt
 					.setPlaceholder(isDe ? "Morgenausgabe" : "Morning Edition")
@@ -212,7 +211,7 @@ export class ManagePaperModal extends Modal {
 			);
 
 		new Setting(container)
-			.setName(isDe ? "Sprache der Ausgabe" : "Edition Language")
+			.setName(isDe ? "Sprache der Ausgabe" : "Edition language")
 			.setDesc(
 				isDe
 					? "Folgt standardmäßig der Plugin-Sprache, kann aber pro Zeitung übersteuert werden."
@@ -222,7 +221,7 @@ export class ManagePaperModal extends Modal {
 				dd
 					.addOption(
 						"plugin",
-						isDe ? "Plugin-Sprache übernehmen (Standard)" : "Follow plugin language (Default)"
+						isDe ? "Plugin-Sprache übernehmen (Standard)" : "Follow plugin language (default)"
 					)
 					.addOption("en", "English (Vol. · No.)")
 					.addOption("de", "Deutsch (Jahrgang · Nr.)")
@@ -250,7 +249,7 @@ export class ManagePaperModal extends Modal {
 			);
 
 		new Setting(container)
-			.setName(isDe ? "Standard-Format" : "Primary Format")
+			.setName(isDe ? "Standard-Format" : "Primary format")
 			.addDropdown((dd) =>
 				dd
 					.addOption("newspaper", isDe ? "Tageszeitung (Newspaper)" : "Newspaper")
@@ -262,17 +261,17 @@ export class ManagePaperModal extends Modal {
 			);
 
 		new Setting(container)
-			.setName(isDe ? "Zeitungs-Edition" : "Newspaper Edition")
+			.setName(isDe ? "Zeitungs-Edition" : "Newspaper edition")
 			.setDesc(
 				isDe
 					? "Biblio (Fraunces/Serif auf Papier), Digital (Grotesk), Dystopian (Graues Pulp & Typewriter)."
-					: "Biblio (Fraunces/Serif on newsprint), Digital (tight Grotesk), Dystopian (grey pulp & typewriter)."
+					: "Biblio (Fraunces/serif on newsprint), Digital (tight grotesk), Dystopian (grey pulp & typewriter)."
 			)
 			.addDropdown((dd) =>
 				dd
-					.addOption("biblio", "Biblio — Fraunces & Serif (Newsprint)")
-					.addOption("digital", "Digital — Tight Grotesk")
-					.addOption("dystopian", "Dystopian — Grey Pulp & Typewriter")
+					.addOption("biblio", "Biblio — Fraunces & serif (newsprint)")
+					.addOption("digital", "Digital — tight grotesk")
+					.addOption("dystopian", "Dystopian — grey pulp & typewriter")
 					.setValue(paper.edition)
 					.onChange(async (val) => {
 						await this.updatePaper((p) => ({ ...p, edition: val as NewspaperEdition }), true);
@@ -280,18 +279,18 @@ export class ManagePaperModal extends Modal {
 			);
 
 		new Setting(container)
-			.setName(isDe ? "Magazin-Stil" : "Magazine Style")
+			.setName(isDe ? "Magazin-Stil" : "Magazine style")
 			.setDesc(
 				isDe
 					? "Bicycle (Serif auf Cream), Signal (Grotesk auf Grau), Plate (Fotografie auf Weiß/Schwarz)."
-					: "Bicycle (Serif on cream), Signal (Grotesk on grey), Plate (photography on white/black)."
+					: "Bicycle (serif on cream), Signal (grotesk on grey), Plate (photography on white/black)."
 			)
 			.addDropdown((dd) =>
 				dd
-					.addOption("bicycle", "Bicycle — Serif on Cream")
-					.addOption("signal", "Signal — Grotesk on Grey")
-					.addOption("plate-light", "Plate — Photography on White")
-					.addOption("plate-dark", "Plate — Photography on Black")
+					.addOption("bicycle", "Bicycle — serif on cream")
+					.addOption("signal", "Signal — grotesk on grey")
+					.addOption("plate-light", "Plate — photography on white")
+					.addOption("plate-dark", "Plate — photography on black")
 					.setValue(paper.magazineStyle)
 					.onChange(async (val) => {
 						await this.updatePaper((p) => ({ ...p, magazineStyle: val as MagazineStyle }), true);
@@ -300,7 +299,7 @@ export class ManagePaperModal extends Modal {
 
 		// Weekday Magazine Schedule
 		const daysSetting = new Setting(container)
-			.setName(isDe ? "Wochentage als Magazin drucken" : "Print as Magazine on Days")
+			.setName(isDe ? "Wochentage als Magazin drucken" : "Print as magazine on days")
 			.setDesc(isDe ? "An ausgewählten Tagen erscheint die Zeitung automatisch im Magazin-Layout." : "Automatically format as a magazine on selected days.");
 
 		const dayLabels = isDe
@@ -308,10 +307,9 @@ export class ManagePaperModal extends Modal {
 			: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 		dayLabels.forEach((lbl, dayIdx) => {
 			const btn = daysSetting.controlEl.createEl("button", {
-				cls: `op-btn ${paper.magazineDays.includes(dayIdx) ? "is-active" : ""}`.trim(),
+				cls: `op-btn op-day-btn ${paper.magazineDays.includes(dayIdx) ? "is-active" : ""}`.trim(),
 				text: lbl,
 			});
-			btn.style.marginLeft = "4px";
 			btn.addEventListener("click", async () => {
 				const set = new Set(paper.magazineDays);
 				if (set.has(dayIdx)) set.delete(dayIdx);
@@ -322,13 +320,13 @@ export class ManagePaperModal extends Modal {
 		});
 
 		new Setting(container)
-			.setName(isDe ? "Bild-Stil (Halftone-Raster)" : "Picture Style")
+			.setName(isDe ? "Bild-Stil (Halftone-Raster)" : "Picture style")
 			.addDropdown((dd) =>
 				dd
-					.addOption("halftone", isDe ? "Halftone S/W-Punktraster (45°)" : "Halftone Dot Screen")
-					.addOption("color-ink", isDe ? "Gedämpfter Zeitungsfarbdruck" : "Muted Color Ink")
-					.addOption("color", isDe ? "Originalfarbe" : "Full Color")
-					.addOption("none", isDe ? "Nur Text (keine Bilder)" : "No Pictures")
+					.addOption("halftone", isDe ? "Halftone S/W-Punktraster (45°)" : "Halftone dot screen")
+					.addOption("color-ink", isDe ? "Gedämpfter Zeitungsfarbdruck" : "Muted color ink")
+					.addOption("color", isDe ? "Originalfarbe" : "Full color")
+					.addOption("none", isDe ? "Nur Text (keine Bilder)" : "No pictures")
 					.setValue(paper.imageStyle)
 					.onChange(async (val) => {
 						await this.updatePaper((p) => ({ ...p, imageStyle: val as ImageRenderStyle }));
@@ -336,7 +334,7 @@ export class ManagePaperModal extends Modal {
 			);
 
 		new Setting(container)
-			.setName(isDe ? "Schriftgröße & Seiten-Formfaktor" : "Type Size & Sheet Mode")
+			.setName(isDe ? "Schriftgröße & Seiten-Formfaktor" : "Type size & sheet mode")
 			.addDropdown((dd) =>
 				dd
 					.addOption("compact", isDe ? "Kompakt" : "Compact")
@@ -350,9 +348,9 @@ export class ManagePaperModal extends Modal {
 			)
 			.addDropdown((dd) =>
 				dd
-					.addOption("auto", isDe ? "Automatisch (Responsiv)" : "Auto Spread / Fold")
-					.addOption("broadsheet", isDe ? "Broadsheet (Mehrspaltig)" : "Full Spread")
-					.addOption("folded", isDe ? "Gefaltet (Schmale Spalte)" : "Folded Sheet")
+					.addOption("auto", isDe ? "Automatisch (Responsiv)" : "Auto spread / fold")
+					.addOption("broadsheet", isDe ? "Broadsheet (Mehrspaltig)" : "Full spread")
+					.addOption("folded", isDe ? "Gefaltet (Schmale Spalte)" : "Folded sheet")
 					.setValue(paper.sheetMode)
 					.onChange(async (val) => {
 						await this.updatePaper((p) => ({ ...p, sheetMode: val as SheetMode }));
@@ -368,7 +366,7 @@ export class ManagePaperModal extends Modal {
 		let targetDeskVal = CORRESPONDENCE_SECTION_ID;
 
 		const addSetting = new Setting(container)
-			.setName(isDe ? "Website oder RSS/Atom-Adresse hinzufügen" : "Add Website or Feed URL")
+			.setName(isDe ? "Website oder RSS/Atom-Adresse hinzufügen" : "Add website or feed URL")
 			.setDesc(
 				isDe
 					? "Gib eine beliebige Website (z. B. zeit.de) oder Feed-URL ein. Ohne feste Rubrik erscheint sie unter „Korrespondenz“."
@@ -377,7 +375,7 @@ export class ManagePaperModal extends Modal {
 
 		addSetting.addText((txt) => {
 			txt.setPlaceholder("https://example.com/feed.xml");
-			txt.inputEl.style.width = "240px";
+			txt.inputEl.addClass("op-feed-url-input");
 			txt.onChange((v) => {
 				urlInputVal = v;
 			});
@@ -438,11 +436,11 @@ export class ManagePaperModal extends Modal {
 
 		// 2. OPML Import & Export
 		const opmlSetting = new Setting(container)
-			.setName("OPML Import & Export")
+			.setName("OPML import & export")
 			.setDesc(
 				isDe
 					? "Übernehme bestehende RSS-Sammlungen (Ordner werden automatisch als Rubriken angelegt) oder exportiere deine Zeitung."
-					: "Import an OPML subscription list (folders become Desks) or export this paper."
+					: "Import an OPML subscription list (folders become desks) or export this paper."
 			);
 
 		opmlSetting.addButton((btn) =>
@@ -537,13 +535,15 @@ export class ManagePaperModal extends Modal {
 		);
 
 		// 3. Custom Desks / Sections management
-		container.createEl("h4", { text: isDe ? "Rubriken (Desks)" : "Editorial Desks" });
+		new Setting(container)
+			.setName(isDe ? "Rubriken (Desks)" : "Editorial desks")
+			.setHeading();
 		let newDeskTitle = "";
 		new Setting(container)
-			.setName(isDe ? "Neue Rubrik anlegen" : "Create Custom Desk")
+			.setName(isDe ? "Neue Rubrik anlegen" : "Create custom desk")
 			.addText((txt) =>
 				txt
-					.setPlaceholder(isDe ? "z. B. Lokales, Finanzen, Musik" : "e.g. Local, Markets, Books")
+					.setPlaceholder(isDe ? "z. B. Lokales, Finanzen, Musik" : "e.g. Local, markets, books")
 					.onChange((v) => {
 						newDeskTitle = v;
 					})
@@ -590,17 +590,19 @@ export class ManagePaperModal extends Modal {
 		}
 
 		// 4. Subscribed Feeds List
-		container.createEl("h4", {
-			text: isDe
-				? `Abonnierte Quellen (${paper.feeds.length})`
-				: `Subscribed Publications (${paper.feeds.length})`,
-		});
+		new Setting(container)
+			.setName(
+				isDe
+					? `Abonnierte Quellen (${paper.feeds.length})`
+					: `Subscribed publications (${paper.feeds.length})`
+			)
+			.setHeading();
 
 		if (paper.feeds.length === 0) {
 			container.createEl("p", {
 				text: isDe
 					? "Noch keine Quellen eingetragen. Wähle oben eine Adresse oder öffne den Reiter „Starter-Katalog & Desks“."
-					: "No publications added yet. Paste an address above or browse Starter Desks.",
+					: "No publications added yet. Paste an address above or browse starter desks.",
 			});
 			return;
 		}
@@ -610,12 +612,8 @@ export class ManagePaperModal extends Modal {
 			const info = row.createDiv();
 			info.createEl("strong", { text: feed.title });
 			info.createDiv({
+				cls: feed.lastError ? "op-feed-meta is-error" : "op-feed-meta",
 				text: feed.lastError ? `⚠ ${feed.lastError}` : feed.url,
-				attr: {
-					style: `font-size: 0.78rem; color: ${
-						feed.lastError ? "var(--text-error)" : "var(--text-muted)"
-					}; word-break: break-all;`,
-				},
 			});
 
 			const controls = row.createDiv({ cls: "op-utility-group" });
@@ -698,7 +696,9 @@ export class ManagePaperModal extends Modal {
 		const subscribedUrls = new Set(paper.feeds.map((f) => f.url.toLowerCase()));
 
 		for (const cat of STARTER_CATALOG) {
-			container.createEl("h4", { text: isDe ? cat.labelDe : cat.labelEn });
+			new Setting(container)
+				.setName(isDe ? cat.labelDe : cat.labelEn)
+				.setHeading();
 			const grid = container.createDiv({ cls: "op-starter-grid" });
 
 			for (const pub of cat.publications) {
@@ -708,8 +708,8 @@ export class ManagePaperModal extends Modal {
 				const top = item.createDiv();
 				top.createEl("strong", { text: pub.title });
 				top.createEl("p", {
+					cls: "op-starter-desc",
 					text: isDe ? pub.descriptionDe ?? pub.description : pub.description,
-					attr: { style: "margin: 4px 0 0; font-size: 0.8rem; color: var(--text-muted);" },
 				});
 
 				const actionBtn = item.createEl("button", {
@@ -720,7 +720,7 @@ export class ManagePaperModal extends Modal {
 							: "✓ Subscribed"
 						: isDe
 							? "+ Aufnehmen"
-							: "+ Add to Paper",
+							: "+ Add to paper",
 				});
 
 				actionBtn.addEventListener("click", async () => {
@@ -771,15 +771,15 @@ export class ManagePaperModal extends Modal {
 		const isDe = this.uiLang() === "de";
 
 		new Setting(container)
-			.setName(isDe ? "Beobachtete Themen (Tracked Topics)" : "Tracked Topics")
+			.setName(isDe ? "Beobachtete Themen (Tracked Topics)" : "Tracked topics")
 			.setDesc(
 				isDe
 					? "Kommagetrennte Begriffe (z. B. Obsidian, KI, Architektur). Treffer werden hervorgehoben und zusätzlich in einer eigenen Themen-Rubrik gebündelt."
-					: "Comma-separated keywords highlighted across your paper and collected into a dedicated Tracked Topics desk."
+					: "Comma-separated keywords highlighted across your paper and collected into a dedicated Tracked topics desk."
 			)
 			.addTextArea((ta) => {
 				ta.inputEl.rows = 3;
-				ta.inputEl.style.width = "100%";
+				ta.inputEl.addClass("op-fullwidth-textarea");
 				ta.setValue(paper.trackedTopics.join(", "));
 				ta.onChange(async (val) => {
 					const list = val
@@ -791,7 +791,7 @@ export class ManagePaperModal extends Modal {
 			});
 
 		new Setting(container)
-			.setName(isDe ? "Stummgeschaltete Begriffe (Muted Keywords)" : "Muted Keywords")
+			.setName(isDe ? "Stummgeschaltete Begriffe (Muted Keywords)" : "Muted keywords")
 			.setDesc(
 				isDe
 					? "Artikel mit diesen Begriffen werden beim Drucken der Ausgabe komplett herausgefiltert."
@@ -799,7 +799,7 @@ export class ManagePaperModal extends Modal {
 			)
 			.addTextArea((ta) => {
 				ta.inputEl.rows = 3;
-				ta.inputEl.style.width = "100%";
+				ta.inputEl.addClass("op-fullwidth-textarea");
 				ta.setValue(paper.mutedKeywords.join(", "));
 				ta.onChange(async (val) => {
 					const list = val
@@ -811,7 +811,7 @@ export class ManagePaperModal extends Modal {
 			});
 
 		new Setting(container)
-			.setName(isDe ? "Zeitfenster (Stunden)" : "Lookback Window (Hours)")
+			.setName(isDe ? "Zeitfenster (Stunden)" : "Lookback window (hours)")
 			.setDesc(isDe ? "Standard: 72 Stunden für frische Tagesausgaben." : "Default: 72 hours.")
 			.addSlider((sl) =>
 				sl
@@ -824,7 +824,7 @@ export class ManagePaperModal extends Modal {
 			);
 
 		new Setting(container)
-			.setName(isDe ? "Max. Artikel pro Quelle" : "Max Stories per Source")
+			.setName(isDe ? "Max. Artikel pro Quelle" : "Max stories per source")
 			.addSlider((sl) =>
 				sl
 					.setLimits(3, 30, 1)

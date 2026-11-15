@@ -70,7 +70,7 @@ export default class ObsidianPressPlugin extends Plugin {
 
 		this.ribbonEl = this.addRibbonIcon(
 			"newspaper",
-			this.settings.uiLanguage === "de" ? "Obsidian Press öffnen" : "Open Obsidian Press",
+			this.settings.uiLanguage === "de" ? "Morgenausgabe öffnen" : "Open morning edition",
 			() => {
 				void this.activatePressView();
 			}
@@ -111,13 +111,13 @@ export default class ObsidianPressPlugin extends Plugin {
 		if (this.ribbonEl) {
 			this.ribbonEl.setAttribute(
 				"aria-label",
-				isDe ? "Obsidian Press öffnen" : "Open Obsidian Press"
+				isDe ? "Morgenausgabe öffnen" : "Open morning edition"
 			);
 		}
 
 		this.addCommand({
-			id: "open-obsidian-press",
-			name: isDe ? "Morgenausgabe öffnen" : "Open Morning Edition",
+			id: "open-edition",
+			name: isDe ? "Morgenausgabe öffnen" : "Open morning edition",
 			callback: () => {
 				void this.activatePressView();
 			},
@@ -125,7 +125,7 @@ export default class ObsidianPressPlugin extends Plugin {
 
 		this.addCommand({
 			id: "print-fresh-edition",
-			name: isDe ? "Frische Ausgabe drucken" : "Print a Fresh Edition",
+			name: isDe ? "Frische Ausgabe drucken" : "Print a fresh edition",
 			callback: async () => {
 				await this.activatePressView();
 				const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_PRESS);
@@ -141,7 +141,7 @@ export default class ObsidianPressPlugin extends Plugin {
 			id: "manage-sources-and-desks",
 			name: isDe
 				? "Redaktion, Quellen & Starter-Desks verwalten"
-				: "Manage Press Room, Sources & Starter Desks",
+				: "Manage press room, sources, and starter desks",
 			callback: () => {
 				new ManagePaperModal(this.app, {
 					getUiLanguage: () => this.settings.uiLanguage,
@@ -163,7 +163,7 @@ export default class ObsidianPressPlugin extends Plugin {
 			id: "sync-reading-progress-now",
 			name: isDe
 				? "Quellen, Rubriken & Lesefortschritt jetzt synchronisieren"
-				: "Sync Sources, Desks & Reading Progress Now",
+				: "Sync sources, desks, and reading progress now",
 			callback: async () => {
 				await this.readingSync.initializeFromVault();
 				await this.readingSync.flushNow();
@@ -325,7 +325,7 @@ export default class ObsidianPressPlugin extends Plugin {
 			leaf = workspace.getLeaf("tab");
 			await leaf.setViewState({ type: VIEW_TYPE_PRESS, active: true });
 		}
-		workspace.revealLeaf(leaf);
+		await workspace.revealLeaf(leaf);
 	}
 
 	async refreshOpenViews(recompile = false): Promise<void> {

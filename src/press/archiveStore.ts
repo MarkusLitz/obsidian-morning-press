@@ -14,7 +14,7 @@ export interface BackIssueSummary {
 }
 
 /**
- * Manages the local 14-day (fortnight) back-issue rack inside `.obsidian/plugins/obsidian-press/editions/`
+ * Manages the local 14-day (fortnight) back-issue rack inside `.obsidian/plugins/morning-press/editions/`
  * and orchestrates concurrent on-device RSS/Atom/JSON feed fetching.
  */
 export class PressArchiveStore {

@@ -165,7 +165,7 @@ export interface ObsidianPressSettings {
 	deletedPapers?: Record<string, number>;
 }
 
-export const VIEW_TYPE_PRESS = "obsidian-press-view";
+export const VIEW_TYPE_PRESS = "morning-press-view";
 
 export const CORRESPONDENCE_SECTION_ID = "correspondence";
 export const TRACKED_TOPICS_SECTION_ID = "tracked-topics";
@@ -206,7 +206,7 @@ export function createDefaultPaper(language: PaperLanguage = "en"): PaperConfig 
 	const isDe = language === "de";
 	return {
 		id: "morning-edition",
-		title: "The Obsidian Times",
+		title: "The Morning Press",
 		subtitle: isDe ? "Morgenausgabe" : "Morning Edition",
 		motto: isDe ? "Dein Gerät ist die Druckerpresse" : "Your device is the press",
 		language,
@@ -244,7 +244,7 @@ export const DEFAULT_SETTINGS: ObsidianPressSettings = {
 	papers: [createDefaultPaper("en")],
 	clippingsFolder: "Clippings",
 	syncLedgerEnabled: true,
-	syncLedgerPath: "obsidian-press-sync.md",
+	syncLedgerPath: "morning-press-sync.md",
 	retentionDays: 60,
 	fortnightDays: 14,
 	autoOpenMorning: false,

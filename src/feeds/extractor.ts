@@ -158,7 +158,14 @@ export async function extractFullArticle(url: string): Promise<ArticleExtraction
 	// Remove duplicate h1 inside extracted body (reader already prints the headline)
 	bestElement?.querySelectorAll("h1").forEach((h1) => h1.remove());
 
-	let contentHtml = sanitizeArticleHtml(bestElement?.innerHTML ?? "", url);
+	const serializer = new XMLSerializer();
+	const serializedInner = bestElement
+		? Array.from(bestElement.childNodes)
+				.map((node) => serializer.serializeToString(node))
+				.join("")
+				.replace(/\s+xmlns="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "")
+		: "";
+	let contentHtml = sanitizeArticleHtml(serializedInner, url);
 	let plainText = stripHtmlToText(contentHtml);
 	let wordCount = plainText ? plainText.split(/\s+/).filter(Boolean).length : 0;
 

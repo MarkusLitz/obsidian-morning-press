@@ -1,9 +1,9 @@
 {
-	"id": "obsidian-press",
-	"name": "Obsidian Press",
+	"id": "morning-press",
+	"name": "Morning Press",
 	"version": "1.0.0",
 	"minAppVersion": "1.5.0",
-	"description": "Typesets RSS, Atom, and JSON feeds locally on your device into a morning newspaper or magazine with halftone photography, six editorial editions, clippings, and cross-device sync.",
+	"description": "Typeset RSS, Atom, and JSON feeds locally on your device into a morning newspaper or magazine with halftone photography, six editorial editions, clippings, and sync.",
 	"author": "Markus Litz",
 	"authorUrl": "https://github.com/MarkusLitz",
 	"isDesktopOnly": false

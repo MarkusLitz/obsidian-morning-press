@@ -1,10 +1,10 @@
-# Obsidian Press (`obsidian-press`)
+# Morning Press (`morning-press`)
 
-**Obsidian Press** turns your subscribed RSS, Atom, and JSON feeds into a personal, local-first morning newspaper or magazine directly inside Obsidian — inspired by [Biblio Times](https://biblio.ink/times).
+**Morning Press** turns your subscribed RSS, Atom, and JSON feeds into a personal, local-first morning newspaper or magazine directly inside Obsidian — inspired by [Biblio Times](https://biblio.ink/times).
 
 **Your device is the press:** feeds are fetched, parsed, typeset, and archived locally using Obsidian's native `requestUrl` API with zero accounts, zero intermediary proxy servers, and zero tracking.
 
-![Obsidian Press — Morning Edition Front Page with 45° Halftone Photography](assets/screenshot.png)
+![Morning Press — Morning Edition Front Page with 45° Halftone Photography](assets/screenshot.png)
 
 ---
 
@@ -26,7 +26,7 @@
   - Displays a clean status banner for publishers behind HTTP `401`/`403`/`429` consent or bot walls, offering a desktop embedded `<webview>` view or external browser launch.
   - Tracks reading progress down to the paragraph index and automatically scrolls back to where you left off.
 - **Conflict-Free Cross-Device Sync (Obsidian Sync Compatible)**
-  - Maintains a line-oriented Markdown ledger (`obsidian-press-sync.md` by default, configurable path in the vault) so Obsidian Sync merges concurrent edits line-by-line across desktop and mobile without requiring Community Plugin Sync.
+  - Maintains a line-oriented Markdown ledger (`morning-press-sync.md` by default, configurable path in the vault) so Obsidian Sync merges concurrent edits line-by-line across desktop and mobile without requiring Community Plugin Sync.
   - Synchronizes subscribed feeds, papers, editorial desks, clipped article index, read/unread status, and paragraph-accurate reading progress.
 - **Vault Clippings & 14-Day Back-Issue Archive**
   - Clip full stories or highlighted selections into your vault (`Clippings/` by default) as clean Markdown notes with Obsidian Web Clipper-compatible YAML frontmatter (`title`, `source`, `author`, `published`, `created`, `description`, `publication`, `tags: ["clippings"]`).
@@ -41,18 +41,18 @@
 ### Option 1: Using BRAT (Beta Reviewers Auto-update Tester)
 1. Install and enable the **BRAT** community plugin in Obsidian.
 2. Open **Settings -> BRAT -> Add Beta plugin**.
-3. Enter the repository URL: `https://github.com/MarkusLitz/obsidian-press`.
-4. Enable **Obsidian Press** under **Settings -> Community plugins**.
+3. Enter the repository URL: `https://github.com/MarkusLitz/obsidian-morning-press`.
+4. Enable **Morning Press** under **Settings -> Community plugins**.
 
 ### Option 2: Manual Installation from Releases
 1. Download `main.js`, `manifest.json`, and `styles.css` from the latest GitHub Release.
-2. Create `<YourVault>/.obsidian/plugins/obsidian-press/` and copy those three files into it.
-3. Reload community plugins in Obsidian and enable **Obsidian Press**.
+2. Create `<YourVault>/.obsidian/plugins/morning-press/` and copy those three files into it.
+3. Reload community plugins in Obsidian and enable **Morning Press**.
 
 ### Option 3: Build from Source
 ```bash
-git clone https://github.com/MarkusLitz/obsidian-press.git .obsidian/plugins/obsidian-press
-cd .obsidian/plugins/obsidian-press
+git clone https://github.com/MarkusLitz/obsidian-morning-press.git .obsidian/plugins/morning-press
+cd .obsidian/plugins/morning-press
 npm install
 npm run build
 ```
@@ -61,10 +61,10 @@ npm run build
 
 ## Usage & Commands
 
-- **Open Morning Edition** (or click the newspaper ribbon icon): Opens today's edition or builds it from your configured feeds.
-- **Print a Fresh Edition**: Re-fetches all enabled feeds and compiles a fresh issue snapshot.
-- **Manage Press Room, Sources & Starter Desks**: Opens the editorial studio modal to add/remove feeds, import/export OPML, arrange desks, switch editions, or configure Tracked Topics & Muted Keywords.
-- **Sync Sources, Desks & Reading Progress Now**: Forces an immediate read-merge-write pass against your vault sync ledger.
+- **Open morning edition** (or click the newspaper ribbon icon): Opens today's edition or builds it from your configured feeds.
+- **Print a fresh edition**: Re-fetches all enabled feeds and compiles a fresh issue snapshot.
+- **Manage press room, sources, and starter desks**: Opens the editorial studio modal to add/remove feeds, import/export OPML, arrange desks, switch editions, or configure Tracked topics & Muted keywords.
+- **Sync sources, desks, and reading progress now**: Forces an immediate read-merge-write pass against your vault sync ledger.
 
 Nothing is pre-selected on first launch — add feeds directly by pasting any website or RSS/Atom/JSON URL, picking from the Starter Desks, or importing an OPML file.
 
@@ -77,7 +77,7 @@ In accordance with Obsidian's plugin guidelines:
 - **Feed & article fetches:** `requestUrl` connects directly from your device only to the feed URLs and article URLs you subscribe to or open.
 - **Embedded web view fallback:** Only loaded interactively on desktop if you click *"Open in embedded web view"* when a publisher blocks background extraction.
 - **Editorial typography (optional):** When *"Load Editorial Webfonts"* is enabled in settings, the plugin loads a Google Fonts stylesheet (`Fraunces`, `Newsreader`, `Inter`, `Courier Prime`). Disabling this option switches cleanly to local system serif/sans/monospace fallbacks with zero external font requests.
-- **Vault files written:** Clipped notes in your configured clippings folder (`Clippings/`), the cross-device sync ledger (`obsidian-press-sync.md` or your configured vault path) when enabled, and local daily issue JSON caches inside `.obsidian/plugins/obsidian-press/editions/`.
+- **Vault files written:** Clipped notes in your configured clippings folder (`Clippings/`), the cross-device sync ledger (`morning-press-sync.md` or your configured vault path) when enabled, and local daily issue JSON caches inside `.obsidian/plugins/morning-press/editions/`.
 
 ---
 

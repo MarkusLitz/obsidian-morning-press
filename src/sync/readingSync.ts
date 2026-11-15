@@ -10,7 +10,7 @@ import {
 } from "../types";
 
 const LEDGER_HEADER = [
-	"# Obsidian Press — Cross-Device Sync",
+	"# Morning Press — Cross-Device Sync",
 	"",
 	"> Automatically managed cross-device sync ledger for subscribed sources, desks, clippings, reading progress & read state (Obsidian Sync compatible).",
 	"",

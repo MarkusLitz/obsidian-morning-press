@@ -17,12 +17,11 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 
 		const isDe = this.plugin.settings.uiLanguage === "de";
 
-		containerEl.createEl("h2", { text: "Obsidian Press" });
 		containerEl.createEl("p", {
+			cls: "op-settings-lead",
 			text: isDe
 				? "Deine lokale Morgenzeitung & Magazin-Druckerpresse für RSS-, Atom- und JSON-Feeds – inspiriert von Biblio Times."
-				: "Your local morning newspaper & magazine printing press for RSS, Atom, and JSON feeds — inspired by Biblio Times.",
-			attr: { style: "color: var(--text-muted); margin-top: -4px;" },
+				: "Your local morning newspaper and magazine printing press for RSS, Atom, and JSON feeds — inspired by Biblio Times.",
 		});
 
 		new Setting(containerEl)
@@ -30,11 +29,11 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			.setDesc(
 				isDe
 					? "Sprache für Benutzeroberfläche, Befehle und Ausgaben (Standard: Englisch)."
-					: "Interface, command, and default edition language (Default: English)."
+					: "Interface, command, and default edition language (default: English)."
 			)
 			.addDropdown((dd) =>
 				dd
-					.addOption("en", "English (Default)")
+					.addOption("en", "English (default)")
 					.addOption("de", "Deutsch")
 					.setValue(this.plugin.settings.uiLanguage === "de" ? "de" : "en")
 					.onChange(async (val) => {
@@ -51,7 +50,7 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			.setName(
 				isDe
 					? "Zeitungen, Quellen, Starter-Desks & OPML verwalten"
-					: "Manage Papers, Sources, Starter Desks & OPML"
+					: "Manage papers, sources, starter desks, and OPML"
 			)
 			.setDesc(
 				isDe
@@ -60,14 +59,14 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			)
 			.addButton((btn) =>
 				btn
-					.setButtonText(isDe ? "Zeitung öffnen" : "Open Paper")
+					.setButtonText(isDe ? "Zeitung öffnen" : "Open paper")
 					.onClick(() => {
 						void this.plugin.activatePressView();
 					})
 			)
 			.addButton((btn) =>
 				btn
-					.setButtonText(isDe ? "Redaktion & Quellen…" : "Press Room & Sources…")
+					.setButtonText(isDe ? "Redaktion & Quellen…" : "Press room & sources…")
 					.setCta()
 					.onClick(() => {
 						new ManagePaperModal(this.app, {
@@ -92,12 +91,12 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 					})
 			);
 
-		containerEl.createEl("h3", {
-			text: isDe ? "Clippings & Vault-Integration" : "Clippings & Vault Integration",
-		});
+		new Setting(containerEl)
+			.setName(isDe ? "Clippings & Vault-Integration" : "Clippings & vault integration")
+			.setHeading();
 
 		new Setting(containerEl)
-			.setName(isDe ? "Clippings-Ordner" : "Clippings Folder")
+			.setName(isDe ? "Clippings-Ordner" : "Clippings folder")
 			.setDesc(
 				isDe
 					? "Zielordner im Vault, in dem geclippte Artikel & Textstellen als Markdown-Notizen (mit Web-Clipper-kompatiblem Frontmatter) abgelegt werden."
@@ -113,17 +112,19 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 					})
 			);
 
-		containerEl.createEl("h3", {
-			text: isDe
-				? "Geräteübergreifender Sync (Obsidian Sync)"
-				: "Cross-Device Sync (Obsidian Sync)",
-		});
+		new Setting(containerEl)
+			.setName(
+				isDe
+					? "Geräteübergreifender Sync (Obsidian Sync)"
+					: "Cross-device sync (Obsidian Sync)"
+			)
+			.setHeading();
 
 		new Setting(containerEl)
 			.setName(
 				isDe
 					? "Zeilenbasierte Vault-Sync-Datei aktivieren"
-					: "Enable Line-Based Vault Sync Ledger"
+					: "Enable line-based vault sync ledger"
 			)
 			.setDesc(
 				isDe
@@ -141,7 +142,7 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName(isDe ? "Pfad der Sync-Datei im Vault" : "Vault Sync Ledger Path")
+			.setName(isDe ? "Pfad der Sync-Datei im Vault" : "Vault sync ledger path")
 			.setDesc(
 				isDe
 					? "Kein führender Punkt im Dateinamen, damit Obsidian Sync die Datei auf allen Geräten überträgt und zeilenweise zusammenführt."
@@ -149,11 +150,11 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			)
 			.addText((txt) =>
 				txt
-					.setPlaceholder("obsidian-press-sync.md")
+					.setPlaceholder("morning-press-sync.md")
 					.setValue(this.plugin.settings.syncLedgerPath)
 					.onChange(async (val) => {
 						this.plugin.settings.syncLedgerPath =
-							val.trim() || "obsidian-press-sync.md";
+							val.trim() || "morning-press-sync.md";
 						await this.plugin.saveSettings();
 					})
 			);
@@ -162,7 +163,7 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			.setName(
 				isDe
 					? "Aufbewahrungsdauer des Lese-Verlaufs (Tage)"
-					: "Reading History Retention (Days)"
+					: "Reading history retention (days)"
 			)
 			.setDesc(
 				isDe
@@ -180,15 +181,15 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 					})
 			);
 
-		containerEl.createEl("h3", {
-			text: isDe ? "Lesemodus, Optik & Morgenroutine" : "Reader, Typography & Morning Routine",
-		});
+		new Setting(containerEl)
+			.setName(isDe ? "Lesemodus, Optik & Morgenroutine" : "Reader, typography, and morning routine")
+			.setHeading();
 
 		new Setting(containerEl)
 			.setName(
 				isDe
 					? "Volltext beim Öffnen eines Artikels automatisch laden"
-					: "Automatically Fetch Full Article Text on Open"
+					: "Automatically fetch full article text on open"
 			)
 			.setDesc(
 				isDe
@@ -206,12 +207,12 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			.setName(
 				isDe
 					? "Morgenausgabe beim ersten Start des Tages automatisch öffnen"
-					: "Auto-Open Morning Edition on First Launch of the Day"
+					: "Auto-open morning edition on first launch of the day"
 			)
 			.setDesc(
 				isDe
-					? "Öffnet Obsidian Press einmal pro Kalendertag automatisch in einem neuen Tab."
-					: "Opens Obsidian Press automatically once per calendar day."
+					? "Öffnet deine Morgenausgabe einmal pro Kalendertag automatisch in einem neuen Tab."
+					: "Opens your morning edition automatically once per calendar day."
 			)
 			.addToggle((tg) =>
 				tg.setValue(this.plugin.settings.autoOpenMorning).onChange(async (val) => {
@@ -224,12 +225,12 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			.setName(
 				isDe
 					? "Ausgaben-Archiv (Fortnight Rack in Tagen)"
-					: "Back-Issue Archive (Fortnight Rack Days)"
+					: "Back-issue archive (fortnight rack days)"
 			)
 			.setDesc(
 				isDe
 					? "Anzahl vergangener Tagesausgaben, die lokal zum Nachblättern vorgehalten werden (Standard: 14 Tage)."
-					: "Number of past daily editions kept locally on the back-issue rack (Default: 14 days)."
+					: "Number of past daily editions kept locally on the back-issue rack (default: 14 days)."
 			)
 			.addSlider((sl) =>
 				sl
@@ -246,7 +247,7 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			.setName(
 				isDe
 					? "Gelesene Artikel im Satz dezent abblenden"
-					: "Dim Read Stories in Layout"
+					: "Dim read stories in layout"
 			)
 			.setDesc(
 				isDe
@@ -265,7 +266,7 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			.setName(
 				isDe
 					? "Halftone-Rasterweite (Punktgröße)"
-					: "Halftone Screen Pitch (Dot Size)"
+					: "Halftone screen pitch (dot size)"
 			)
 			.setDesc(
 				isDe
@@ -288,7 +289,7 @@ export class ObsidianPressSettingTab extends PluginSettingTab {
 			.setName(
 				isDe
 					? "Kuratierte Zeitungs-Webfonts laden (Fraunces, Newsreader, Courier Prime)"
-					: "Load Editorial Webfonts (Fraunces, Newsreader, Courier Prime)"
+					: "Load editorial webfonts (Fraunces, Newsreader, Courier Prime)"
 			)
 			.setDesc(
 				isDe
