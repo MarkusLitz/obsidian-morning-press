@@ -4,6 +4,8 @@
 
 **Your device is the press:** feeds are fetched, parsed, typeset, and archived locally using Obsidian's native `requestUrl` API with zero accounts, zero intermediary proxy servers, and zero tracking.
 
+![Obsidian Press — Morning Edition Front Page with 45° Halftone Photography](assets/screenshot.png)
+
 ---
 
 ## Features
